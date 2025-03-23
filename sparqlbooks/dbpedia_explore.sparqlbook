@@ -1,0 +1,20 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# exploration de DBpedia",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# Liste de ma population\r\nCréer la liste de la population",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "        PREFIX dbr: <http://dbpedia.org/resource/>\r\n        PREFIX dbp: <http://dbpedia.org/property/>\r\n        PREFIX dbo: <http://dbpedia.org/ontology/>\r\n        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\n        SELECT ?o1 (MIN(?birthYear) AS ?birthYear) (str(?label) AS ?name)\r\n        WHERE {\r\n            {\r\n                dbr:List_of_World_War_I_flying_aces_from_Germany ?p ?o1.\r\n            }\r\n            UNION\r\n            {\r\n                dbr:List_of_World_War_I_flying_aces_from_the_Russian_Empire ?p ?o1.\r\n            }\r\n            UNION\r\n            {\r\n                dbr:List_of_World_War_I_aces_from_Australia ?p ?o1.\r\n            }\r\n            UNION\r\n            {\r\n                dbr:List_of_World_War_I_flying_aces_from_the_British_Empire ?p ?o1.\r\n            }\r\n            UNION\r\n            {\r\n                dbr:List_of_World_War_I_flying_aces_from_France ?p ?o1.\r\n            }\r\n            UNION\r\n            {\r\n                dbr:List_of_World_War_I_flying_aces_from_Austria-Hungary ?p ?o1.\r\n            }\r\n            UNION\r\n            {\r\n                dbr:List_of_World_War_I_aces_from_Canada ?p ?o1.\r\n            }\r\n\r\n            ?o1 a dbo:Person;\r\n                dbp:birthDate | dbo:birthDate ?birthDate;\r\n                rdfs:label ?label.\r\n            BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n            FILTER (LANG(?label) = 'en')\r\n        }\r\n        GROUP BY ?o1 ?label\r\n        ORDER BY ?birthYear \r\n        LIMIT 100",
+    "metadata": {}
+  }
+]
