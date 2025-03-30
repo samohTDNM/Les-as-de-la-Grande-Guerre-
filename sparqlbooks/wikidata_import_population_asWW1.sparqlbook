@@ -1,0 +1,134 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## Import to Allegrograph\n\nIn this notebook we describe the steps of data import to our Allegrograph repository.\n\n\nThe SPARQL queries are to be executed on the Allegrograph SPARQL Endpoint\n\nFirst we check the basic properties of the population: name, sex, year of birth.",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT DISTINCT ?ace ?aceLabel ?birthYear ?deathYear ?country \r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n  \r\n    ?ace wdt:P106 wd:Q2095549 ;    \r\n         wdt:P607 wd:Q361 ;         \r\n         wdt:P569 ?birthDate.\r\n         \r\n    \r\n    OPTIONAL { ?ace wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?ace wdt:P27 ?country. }\r\n\r\n    BIND(REPLACE(str(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?birthYear)\r\n    FILTER(xsd:integer(?birthYear) > 1750 && xsd:integer(?birthYear) < 2001)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n\r\n    BIND(REPLACE(str(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?deathYear)\r\n    FILTER(xsd:integer(?deathYear) > 1750 && xsd:integer(?deathYear) < 2001)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n\r\n    BIND ( ?aceLabel as ?aceLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n  }\r\n}\r\nORDER BY ASC(?birthDate)\r\nLIMIT 10\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Preparing to import data\n\n* Here we use the CONSTRUCT query to prepare the triples for import into a graph database.\n* We limit the test to a few rows to avoid displaying thousands of them.\n* Inspect and check the triplets that are generated.\n* Reuse if possible the Wikidata properties ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item rdfs:label ?itemLabel .\r\n  ?item wdt:P569 ?birthYear .\r\n  ?item wdt:P570 ?deathYear .\r\n  ?item wdt:P27 ?country .\r\n  ?item wdt:P31 wd:Q5 .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # World War I\r\n          wdt:P569 ?birthDate.\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n\r\n    # Filter birth year\r\n    BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    # Filter death year if available\r\n    BIND(xsd:integer(SUBSTR(STR(?deathDate), 1, 4)) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND ( ?itemLabel as ?itemLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }   \r\n  }\r\n}\r\nLIMIT 10\r\n\r\n\r\n    \r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Import the triples into a dedicated graph\r\n\r\nTwo import strategies are possible: \r\n* directly through a federated query\r\n  * the query can be executed on a sparql-book \r\n  * or directly on the Allegrograph server, if it takes too much time to work through the notebook \r\n* execute a CONTRUCT with the complete data (without LIMIT clause) and export it to the Turtle format (suffix: .ttl)\r\n  * then import the data into Allegrograph with the appropriate functionality\r\n\r\n\r\nIn all cases, activate in Allegrograph the 'Duplication suppression' of type SPOG, cf. menu: Repository control -> Manage duplicates -> Duplicate suppression type\r\n\r\n\r\nThe graph URI is in fact a URL pointing to a page with the description of the [imported data](../Wikidata/graph/imported-data.md)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item rdfs:label ?itemLabel .\r\n    ?item wdt:P569 ?birthYear .\r\n    ?item wdt:P570 ?deathYear .\r\n    ?item wdt:P27 ?country .\r\n    ?item rdf:type wd:Q5 .  # instance of human\r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 .\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND(?itemLabel AS ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n\r\n\r\n        \r\n    \r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Verify imported triples and add labels to genders",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of triples in the graph\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s ?p ?o}\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons with more than one label : no person\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s rdf:label ?o}\r\n}\r\nGROUP BY ?s\r\nHAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons having more than one gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?s (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen}\r\n}\r\nGROUP BY ?s\r\nHAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons per gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?gen (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen}\r\n}\r\nGROUP BY ?gen\r\n#HAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons from France\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?country (COUNT(*) AS ?n)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s wdt:P27 ?country .\r\n  }\r\n  FILTER(?country = wd:Q142)  # Q142 = France\r\n}\r\nGROUP BY ?country",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons per gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?gen (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen;\r\n            wdt:P569 ?birthDate.\r\n        FILTER (?birthDate < '1900')     \r\n          }\r\n}\r\nGROUP BY ?gen\r\n#HAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Add the label to the gender\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?gen ?genLabel\r\nWHERE {\r\n\r\n    \r\n\r\n    {SELECT DISTINCT ?gen\r\n    WHERE {\r\n        GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>    \r\n            {?s wdt:P21 ?gen}\r\n    }\r\n    }   \r\n\r\n    SERVICE  <https://query.wikidata.org/sparql> {\r\n        ## Add this clause in order to fill the variable      \r\n        BIND(?gen as ?gen)\r\n        BIND ( ?genLabel as ?genLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n    }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Add the label to the country\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nCONSTRUCT {\r\n  ?country rdfs:label ?countryLabel\r\n}\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Add the label to the country: INSERT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nWITH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> \r\nINSERT {\r\n  ?country rdfs:label ?countryLabel\r\n} \r\nWHERE {    \r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT ?country ?countryLabel\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country .\r\n      }\r\n    }\r\n  }\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Prepare data to analyse",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\n\r\nSELECT ?s ?label ?birthDate ?gen\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nORDER BY ?birthDate\r\nLIMIT 10",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Nombre de personnes\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P31 wd:Q5\r\n          }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Personnes avec choix aléatoire de modalités pour variables doubles\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\n\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\nLIMIT 10\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
+    "metadata": {}
+  }
+]
