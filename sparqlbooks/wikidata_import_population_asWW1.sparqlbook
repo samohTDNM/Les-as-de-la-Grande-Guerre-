@@ -50,19 +50,19 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Number of persons with more than one label : no person\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s rdf:label ?o}\r\n}\r\nGROUP BY ?s\r\nHAVING (?n > 1)",
+    "value": "### Number of persons with more than one label : 196\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(?s) AS ?acesMultipleLabels)\r\nWHERE {\r\n  {\r\n    SELECT ?s (COUNT(?label) AS ?labelCount)\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s rdfs:label ?label\r\n      }\r\n    }\r\n    GROUP BY ?s\r\n    HAVING (?labelCount > 1)\r\n  }\r\n}\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Number of persons having more than one gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?s (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen}\r\n}\r\nGROUP BY ?s\r\nHAVING (?n > 1)",
+    "value": "### Number of persons having more than one country\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?person (COUNT(?country) AS ?n)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?person wdt:P27 ?country .\r\n  }\r\n}\r\nGROUP BY ?person\r\nHAVING (?n > 1)\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Number of persons per gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?gen (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen}\r\n}\r\nGROUP BY ?gen\r\n#HAVING (?n > 1)",
+    "value": "### Number of persons per country\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?country (COUNT(?person) AS ?n)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?person wdt:P27 ?country .\r\n  }\r\n}\r\nGROUP BY ?country\r\nORDER BY DESC(?n)\r\n\r\n#HAVING (?n > 1)",
     "metadata": {}
   },
   {
@@ -74,7 +74,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Number of persons per gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?gen (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen;\r\n            wdt:P569 ?birthDate.\r\n        FILTER (?birthDate < '1900')     \r\n          }\r\n}\r\nGROUP BY ?gen\r\n#HAVING (?n > 1)",
+    "value": "### clear graph to start again\r\n\r\nCLEAR GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n",
     "metadata": {}
   },
   {
