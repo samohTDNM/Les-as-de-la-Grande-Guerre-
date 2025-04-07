@@ -80,25 +80,25 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Add the label to the gender\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?gen ?genLabel\r\nWHERE {\r\n\r\n    \r\n\r\n    {SELECT DISTINCT ?gen\r\n    WHERE {\r\n        GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>    \r\n            {?s wdt:P21 ?gen}\r\n    }\r\n    }   \r\n\r\n    SERVICE  <https://query.wikidata.org/sparql> {\r\n        ## Add this clause in order to fill the variable      \r\n        BIND(?gen as ?gen)\r\n        BIND ( ?genLabel as ?genLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n    }\r\n}",
+    "value": "### Add the label to the country (copy of prof, doesn't work)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?country ?countryLabel\r\nWHERE {\r\n\r\n    \r\n\r\n    {SELECT DISTINCT ?country\r\n    WHERE {\r\n        GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>    \r\n            {?s wdt:P27 ?country}\r\n    }\r\n    }   \r\n\r\n    SERVICE  <https://query.wikidata.org/sparql> {\r\n        ## Add this clause in order to fill the variable      \r\n        BIND(?country as ?country)\r\n        BIND ( ?countryLabel as ?countryLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n    }\r\n}",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Add the label to the country\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nCONSTRUCT {\r\n  ?country rdfs:label ?countryLabel\r\n}\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n",
+    "value": "### Add the label to the country: CONSTRUCT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nCONSTRUCT {\r\n  ?country rdfs:label ?countryLabel\r\n}\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Add the label to the country: INSERT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nWITH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> \r\nINSERT {\r\n  ?country rdfs:label ?countryLabel\r\n} \r\nWHERE {    \r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n\r\n",
+    "value": "### Add the label to the country: INSERT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nWITH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> \r\nINSERT {\r\n  ?country rdfs:label ?countryLabel\r\n} \r\nWHERE {    \r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> \r\n      {?s wdt:P27 ?country}\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n        BIND(?country as ?country)\r\n        BIND ( ?countryLabel as ?countryLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n  }\r\n}\r\n\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT ?country ?countryLabel\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country .\r\n      }\r\n    }\r\n  }\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n",
+    "value": "# query to check the added labels\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT ?country ?label\r\nFROM <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\nWHERE {\r\n  ?country rdfs:label ?label .\r\n}\r\n\r\n",
     "metadata": {}
   },
   {
@@ -110,25 +110,25 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\n\r\nSELECT ?s ?label ?birthDate ?gen\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nORDER BY ?birthDate\r\nLIMIT 10",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT ?s ?label ?birthDate ?countryLabel\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s a wd:Q5 ;\r\n       wdt:P569 ?birthDate ;\r\n       wdt:P27 ?country ;\r\n       rdfs:label ?label .\r\n    \r\n    ?country rdfs:label ?countryLabel .\r\n  }\r\n}\r\nORDER BY ?birthDate\r\nLIMIT 10\r\n\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Nombre de personnes\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P31 wd:Q5\r\n          }\r\n}",
+    "value": "### Nombre de personnes \r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s a wd:Q5\r\n          }\r\n}",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Personnes avec choix aléatoire de modalités pour variables doubles\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\n\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\nLIMIT 10\r\n",
+    "value": "### Personnes avec choix aléatoire de modalités pour variables doubles\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT ?s (SAMPLE(?label) AS ?label) (MAX(?birthYear) AS ?birthYear)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s wdt:P27 ?country ;\r\n       rdfs:label ?label ;\r\n       wdt:P569 ?birthDate .\r\n\r\n    BIND(xsd:integer(?birthDate) AS ?birthYear)\r\n  }\r\n}\r\nGROUP BY ?s\r\nLIMIT 10\r\n\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/Wikidata/graph/imported-data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
+    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
     "metadata": {}
   }
 ]
