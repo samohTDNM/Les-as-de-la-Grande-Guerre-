@@ -74,7 +74,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### clear graph to start again\r\n\r\nCLEAR GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n",
+    "value": "### clear graph to start again in case\r\n\r\nCLEAR GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n",
     "metadata": {}
   },
   {
