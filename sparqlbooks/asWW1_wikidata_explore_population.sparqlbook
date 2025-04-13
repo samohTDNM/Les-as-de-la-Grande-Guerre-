@@ -1,0 +1,68 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## Explore Wikidata\r\n\r\nIn this notebook, we refine and document the main requests available on the page [Exploration of Wikidata](../documentation/wikidata/Wikidata-exploration.md) \r\n\r\n\r\nWhen you prepare the queries, you can execute them on the Wikidata SPARQL endpoint, and then document and execute them in this notebook.",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Explore occupations and fields of work",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "SELECT ?ace ?aceLabel ?birthDate ?deathDate ?countryLabel\r\nWHERE {\r\n    ?ace wdt:P106 wd:Q2095549.  \r\n    ?ace wdt:P607 wd:Q361.   \r\n    OPTIONAL { ?ace wdt:P569 ?birthDate. } \r\n    OPTIONAL { ?ace wdt:P570 ?deathDate. } \r\n    OPTIONAL { ?ace wdt:P27 ?country. }  \r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nORDER BY ASC(?birthDate)\r\nLIMIT 50\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### List more frequent occupations\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT ?field ?fieldLabel ?n\r\nWHERE {\r\n\r\n    {\r\n    SELECT ?field (COUNT(*) as ?n)\r\n    WHERE {\r\n        ?item wdt:P101 ?field.\r\n        }\r\n    GROUP BY ?field \r\n    ORDER BY DESC(?n)\r\n\r\n    #OFFSET 20\r\n    LIMIT 20\r\n    }\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n    \r\n    }\r\n    ORDER BY DESC(?n)\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Inspect ace pilots and related occupations",
+    "metadata": {
+      "metadata": {
+        "tags": [
+          "parameters"
+        ]
+      }
+    }
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "   ## Count and inspect occupations and fields of work\r\n   SELECT (COUNT(*) as ?eff)\r\n    WHERE {\r\n        ?item wdt:P31 wd:Q5;  # Any instance of a human.\r\n\r\n            wdt:P106 wd:Q2095549;  # ace pilots\r\n            wdt:P607 wd:Q361; # WW1\r\n            # wdt:P410 ?rank;  # military rank\r\n            # wdt:P166 ?award; # awards received\r\n    }  \r\n    LIMIT 20",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Check if aircraft are there : returns 0 so not relevant in Wikidata\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?aircraft ?aircraftLabel (COUNT(*) AS ?count)\r\nWHERE {\r\n  ?person wdt:P106 wd:Q2095549 ;    # occupation: flying ace\r\n          wdt:P607 wd:Q361 ;        # participated in WWI\r\n          wdt:P9378 ?aircraft .     # aircraft operated\r\n\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nGROUP BY ?aircraft ?aircraftLabel\r\nORDER BY DESC(?count)\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Occupations of WW1 aces\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?occupation ?occupationLabel (COUNT(*) AS ?count)\r\nWHERE {\r\n  ?person wdt:P106 wd:Q2095549 ;  # occupation: flying ace\r\n          wdt:P607 wd:Q361 ;      # conflict: WWI\r\n          wdt:P106 ?occupation .  # get all listed occupations\r\n\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nGROUP BY ?occupation ?occupationLabel\r\nORDER BY DESC(?count)\r\nLIMIT 20\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Count how many properties are available for the considered population\r\n\r\nExecute this query on the Wikidata sparql-endpoint and save the result to a CSV document that you will store in your project: [population properties list](../Wikidata/properties_20250306.csv)\r\n\r\n\r\nOpen your CSV file with a spreadsheet editor:\r\n* Inspect the content of the results and look for relevant properties with regard to your research questions\r\n* Observe all the links to other semantic web repositories, probably the sources of this information.\r\n* You can transform this file to your preferred spreadsheet editor format (Calc, Excel, etc.) and take notes row per row in the spreadsheet.\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT ?p ?propLabel ?eff\r\nWHERE {\r\n  {\r\n    SELECT ?p (COUNT(*) AS ?eff)\r\n    WHERE {\r\n      ?item wdt:P31 wd:Q5 ;              # instance of human\r\n            wdt:P106 wd:Q2095549 ;       # flying ace\r\n            wdt:P607 wd:Q361 ;           # participated in WWI\r\n            wdt:P569 ?birthDate ;\r\n            ?p ?o .\r\n\r\n      BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n      FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n    }\r\n    GROUP BY ?p\r\n  }\r\n\r\n  ?prop wikibase:directClaim ?p .\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nORDER BY DESC(?eff)\r\n\r\n",
+    "metadata": {}
+  }
+]

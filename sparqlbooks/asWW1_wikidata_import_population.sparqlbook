@@ -128,7 +128,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
+    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P27 ?country ;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
     "metadata": {}
   }
 ]
