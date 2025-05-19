@@ -116,7 +116,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Nombre de personnes \r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s a wd:Q5\r\n          }\r\n}",
+    "value": "### Nombre de personnes DINSTINCT : 1069 individuals\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(DISTINCT ?s) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s a wd:Q5 .\r\n    }\r\n}\r\n\r\n",
     "metadata": {}
   },
   {
@@ -129,6 +129,24 @@
     "kind": 2,
     "language": "sparql",
     "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P27 ?country ;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "En relation avec les questions de recherche, un élément important est l'allégeance. Le but est d'être capable d'extraire d'une manière ou d'une autre, la nation pour laquelle s'est battu l'individu. Premièrement, on regarde la \"Birth place\". ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT DISTINCT ?ace ?aceLabel ?birthYear ?deathYear ?country ?placeOfBirth ?placeOfBirthLabel ?birthCountry ?birthCountryLabel\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n  \r\n    ?ace wdt:P106 wd:Q2095549 ;    # Occupation = flying ace\r\n         wdt:P607 wd:Q361 ;         # Conflict = World War I\r\n         wdt:P569 ?birthDate.\r\n    \r\n    OPTIONAL { ?ace wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?ace wdt:P27 ?country. }\r\n    OPTIONAL { \r\n      ?ace wdt:P19 ?placeOfBirth.\r\n      OPTIONAL { ?placeOfBirth wdt:P17 ?birthCountry. }  # <-- New: place -> country\r\n    }\r\n\r\n    BIND(REPLACE(str(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?birthYear)\r\n    FILTER(xsd:integer(?birthYear) > 1750 && xsd:integer(?birthYear) < 2001)\r\n\r\n    BIND(REPLACE(str(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (xsd:integer(?deathYear) > 1750 && xsd:integer(?deathYear) < 2001))\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\nORDER BY ASC(?birthDate)\r\nLIMIT 10\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Place of Birth CONSTRUCT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item rdfs:label ?itemLabel .\r\n  ?item wdt:P569 ?birthYear .\r\n  ?item wdt:P570 ?deathYear .\r\n  ?item wdt:P27 ?country .\r\n  ?item wdt:P19 ?placeOfBirth .   # <-- Added this line\r\n  ?item wdt:P31 wd:Q5 .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # World War I\r\n          wdt:P569 ?birthDate.\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n    OPTIONAL { ?item wdt:P19 ?placeOfBirth. }   # <-- Added this line\r\n\r\n    # Filter birth year\r\n    BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    # Filter death year if available\r\n    BIND(xsd:integer(SUBSTR(STR(?deathDate), 1, 4)) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND (?itemLabel as ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n",
     "metadata": {}
   }
 ]

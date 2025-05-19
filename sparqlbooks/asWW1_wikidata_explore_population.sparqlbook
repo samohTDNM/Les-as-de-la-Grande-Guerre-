@@ -50,6 +50,12 @@
   {
     "kind": 2,
     "language": "sparql",
+    "value": "## Check military branch\r\n\r\nSELECT ?person ?personLabel ?militaryBranch ?militaryBranchLabel\r\nWHERE {\r\n  ?person wdt:P31 wd:Q5;               # instance of human\r\n          wdt:P106 wd:Q2095549;        # occupation: fighter ace\r\n          wdt:P607 wd:Q361.            # conflict: World War I\r\n  OPTIONAL {\r\n    ?person wdt:P241 ?militaryBranch.  # military branch\r\n    ?militaryBranch rdfs:label ?militaryBranchLabel.\r\n    FILTER (lang(?militaryBranchLabel) = \"en\")\r\n  }\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nLIMIT 100\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
     "value": "### Occupations of WW1 aces\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?occupation ?occupationLabel (COUNT(*) AS ?count)\r\nWHERE {\r\n  ?person wdt:P106 wd:Q2095549 ;  # occupation: flying ace\r\n          wdt:P607 wd:Q361 ;      # conflict: WWI\r\n          wdt:P106 ?occupation .  # get all listed occupations\r\n\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nGROUP BY ?occupation ?occupationLabel\r\nORDER BY DESC(?count)\r\nLIMIT 20\r\n",
     "metadata": {}
   },
@@ -62,7 +68,19 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT ?p ?propLabel ?eff\r\nWHERE {\r\n  {\r\n    SELECT ?p (COUNT(*) AS ?eff)\r\n    WHERE {\r\n      ?item wdt:P31 wd:Q5 ;              # instance of human\r\n            wdt:P106 wd:Q2095549 ;       # flying ace\r\n            wdt:P607 wd:Q361 ;           # participated in WWI\r\n            wdt:P569 ?birthDate ;\r\n            ?p ?o .\r\n\r\n      BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n      FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n    }\r\n    GROUP BY ?p\r\n  }\r\n\r\n  ?prop wikibase:directClaim ?p .\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nORDER BY DESC(?eff)\r\n\r\n",
+    "value": "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT ?p ?propLabel ?eff\r\nWHERE {\r\n  {\r\n    SELECT ?p (COUNT(*) AS ?eff)\r\n    WHERE {\r\n      ?item wdt:P31 wd:Q5 ;              # instance of human\r\n            wdt:P106 wd:Q2095549 ;       # flying ace\r\n            wdt:P607 wd:Q361 ;           # participated in WWI\r\n            wdt:P569 ?birthDate ;\r\n            ?p ?o .\r\n\r\n      BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n      FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n    }\r\n    GROUP BY ?p\r\n  }\r\n\r\n  ?prop wikibase:directClaim ?p .\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nORDER BY DESC(?eff)\r\nLIMIT 20\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# count how many individuals: 1079 in total\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?numberOfIndividuals)\r\nWHERE {\r\n  ?item wdt:P31 wd:Q5 ;              # instance of human\r\n        wdt:P106 wd:Q2095549 ;       # flying ace\r\n        wdt:P607 wd:Q361 ;           # participated in WWI\r\n        wdt:P569 ?birthDate .\r\n\r\n  BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n  FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# count people with awards\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?peopleWithAwards)\r\nWHERE {\r\n  ?item wdt:P31 wd:Q5 ;\r\n        wdt:P106 wd:Q2095549 ;\r\n        wdt:P607 wd:Q361 ;\r\n        wdt:P569 ?birthDate ;\r\n        wdt:P166 ?award .  # has at least one award\r\n\r\n  BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n  FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n}",
     "metadata": {}
   }
 ]
