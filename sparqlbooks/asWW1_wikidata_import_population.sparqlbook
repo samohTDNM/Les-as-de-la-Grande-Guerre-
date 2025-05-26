@@ -32,7 +32,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item rdfs:label ?itemLabel .\r\n    ?item wdt:P569 ?birthYear .\r\n    ?item wdt:P570 ?deathYear .\r\n    ?item wdt:P27 ?country .\r\n    ?item rdf:type wd:Q5 .  # instance of human\r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 .\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND(?itemLabel AS ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n\r\n\r\n        \r\n    \r\n",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item rdfs:label ?itemLabel .\r\n    ?item wdt:P569 ?birthYear .\r\n    ?item wdt:P570 ?deathYear .\r\n    ?item wdt:P27 ?country .\r\n    ?item rdf:type wd:Q5 .  \r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 .\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND(?itemLabel AS ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n\r\n\r\n        \r\n    \r\n",
     "metadata": {}
   },
   {
@@ -116,7 +116,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Nombre de personnes DINSTINCT : 1069 individuals\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(DISTINCT ?s) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s a wd:Q5 .\r\n    }\r\n}\r\n\r\n",
+    "value": "### Nombre de personnes DINSTINCT : 1070 individuals\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(DISTINCT ?s) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s a wd:Q5 .\r\n    }\r\n}\r\n\r\n",
     "metadata": {}
   },
   {
@@ -134,6 +134,42 @@
   {
     "kind": 1,
     "language": "markdown",
+    "value": "Il faut encore ajouter les awards, on distingue que tous les individus n'en ont pas et certains en ont plusieurs",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "## version CONSTRUCT\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item wdt:P166 ?award .\r\n  ?item rdfs:label ?itemLabel .\r\n  ?award rdfs:label ?awardLabel .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 ;\r\n          wdt:P166 ?award .\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n\r\n  }\r\n}\r\nLIMIT 10",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Voici le INSERT pour ajouter les awards, cela représente environ 2250 triplets",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P166 ?award .\r\n    ?item rdfs:label ?itemLabel .\r\n    ?award rdfs:label ?awardLabel .\r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 ;\r\n          wdt:P166 ?award .       # must have award\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n  }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Ce SELECT permet de vérifier les ajouts. On constate 793 pilotes avec awards dont 2304 awards",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\nSELECT (COUNT(DISTINCT ?item) AS ?nbPilotes) (COUNT(?award) AS ?nbAwards)\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;\r\n          wdt:P607 wd:Q361 ;\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 ;\r\n          wdt:P166 ?award .\r\n    FILTER(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) > 1750 &&\r\n           xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) < 2001)\r\n  }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
     "value": "En relation avec les questions de recherche, un élément important est l'allégeance. Le but est d'être capable d'extraire d'une manière ou d'une autre, la nation pour laquelle s'est battu l'individu. Premièrement, on regarde la \"Birth place\". ",
     "metadata": {}
   },
@@ -146,7 +182,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "# Place of Birth CONSTRUCT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item rdfs:label ?itemLabel .\r\n  ?item wdt:P569 ?birthYear .\r\n  ?item wdt:P570 ?deathYear .\r\n  ?item wdt:P27 ?country .\r\n  ?item wdt:P19 ?placeOfBirth .   # <-- Added this line\r\n  ?item wdt:P31 wd:Q5 .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # World War I\r\n          wdt:P569 ?birthDate.\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n    OPTIONAL { ?item wdt:P19 ?placeOfBirth. }   # <-- Added this line\r\n\r\n    # Filter birth year\r\n    BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    # Filter death year if available\r\n    BIND(xsd:integer(SUBSTR(STR(?deathDate), 1, 4)) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND (?itemLabel as ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n",
+    "value": "# Place of Birth CONSTRUCT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item rdfs:label ?itemLabel .\r\n  ?item wdt:P569 ?birthYear .\r\n  ?item wdt:P570 ?deathYear .\r\n  ?item wdt:P27 ?country .\r\n  ?item wdt:P19 ?placeOfBirth .  \r\n  ?item wdt:P31 wd:Q5 .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # World War I\r\n          wdt:P569 ?birthDate.\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n    OPTIONAL { ?item wdt:P19 ?placeOfBirth. }  \r\n\r\n    # Filter birth year\r\n    BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    # Filter death year if available\r\n    BIND(xsd:integer(SUBSTR(STR(?deathDate), 1, 4)) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND (?itemLabel as ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n",
     "metadata": {}
   }
 ]
