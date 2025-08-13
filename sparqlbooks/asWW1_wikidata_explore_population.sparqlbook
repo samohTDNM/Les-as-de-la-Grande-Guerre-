@@ -82,5 +82,47 @@
     "language": "sparql",
     "value": "# count people with awards\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?peopleWithAwards)\r\nWHERE {\r\n  ?item wdt:P31 wd:Q5 ;\r\n        wdt:P106 wd:Q2095549 ;\r\n        wdt:P607 wd:Q361 ;\r\n        wdt:P569 ?birthDate ;\r\n        wdt:P166 ?award .  # has at least one award\r\n\r\n  BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n  FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n}",
     "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# requête qui compte les as qui ont au moins un \"award event\"\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\nPREFIX p:  <http://www.wikidata.org/prop/>\r\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq: <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithAwardDate)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P166 ?st .\r\n  ?st ps:P166 ?award .\r\n  ?st pq:P585 ?date .  # point in time (award date)\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Similairement, la requête suivante se concentre sur le nombre DISTINCT de \"awarding events\" distinct en relation à la WW1",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\n\r\nSELECT (COUNT(DISTINCT ?st) AS ?awardEventsWithDate)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P166 ?st .\r\n  ?st  ps:P166 ?award ;\r\n       pq:P585 ?date .\r\n  # Optional: ignore deprecated statements\r\n  FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# explore branch and rank\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT\r\n  (COUNT(DISTINCT ?ace) AS ?acesTotal)\r\n  (COUNT(DISTINCT ?aceRank) AS ?withRank)\r\n  (COUNT(DISTINCT ?aceBranch) AS ?withBranch)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  OPTIONAL { ?ace wdt:P410 ?rank . BIND(?ace AS ?aceRank) }\r\n  OPTIONAL { ?ace wdt:P241 ?branch . BIND(?ace AS ?aceBranch) }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "la query précédente permet de rendre compte de la proportion de la présence du rank et branch parmi les aces. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# unit membership\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\nPREFIX p:  <http://www.wikidata.org/prop/>\r\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq: <http://www.wikidata.org/prop/qualifier/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithUnitDates)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P463 ?st .\r\n  ?st ps:P463 ?unit .\r\n  VALUES ?q { pq:P580 pq:P582 }  # start/end time\r\n  ?st ?q ?t .\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "La requête précédente démontre que seuls 10 as possèdent réellement la classe membership, entièrement insuffisant pour des analyses statistiques. ",
+    "metadata": {}
   }
 ]
