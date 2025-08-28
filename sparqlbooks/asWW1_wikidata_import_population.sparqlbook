@@ -20,7 +20,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item rdfs:label ?itemLabel .\r\n  ?item wdt:P569 ?birthYear .\r\n  ?item wdt:P570 ?deathYear .\r\n  ?item wdt:P27 ?country .\r\n  ?item wdt:P31 wd:Q5 .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # World War I\r\n          wdt:P569 ?birthDate.\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n\r\n    # Filter birth year\r\n    BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    # Filter death year if available\r\n    BIND(xsd:integer(SUBSTR(STR(?deathDate), 1, 4)) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND ( ?itemLabel as ?itemLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }   \r\n  }\r\n}\r\nLIMIT 10\r\n\r\n\r\n    \r\n",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item rdfs:label ?itemLabel .\r\n  ?item wdt:P569 ?birthYear .\r\n  ?item wdt:P570 ?deathYear .\r\n  ?item wdt:P27 ?country .\r\n  ?item wdt:P31 wd:Q5 .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # World War I\r\n          wdt:P569 ?birthDate.\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n\r\n    # Filter birth year\r\n    BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    # Filter death year if available\r\n    BIND(xsd:integer(SUBSTR(STR(?deathDate), 1, 4)) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1820 && ?deathYear < 2001))\r\n\r\n    BIND ( ?itemLabel as ?itemLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }   \r\n  }\r\n}\r\nLIMIT 10\r\n\r\n\r\n    \r\n",
     "metadata": {}
   },
   {
@@ -32,7 +32,115 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item rdfs:label ?itemLabel .\r\n    ?item wdt:P569 ?birthYear .\r\n    ?item wdt:P570 ?deathYear .\r\n    ?item wdt:P106 wd:Q2095549 .\r\n    ?item wdt:P27 ?country .\r\n    ?item rdf:type wd:Q5 .  \r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 .\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND(?itemLabel AS ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n\r\n\r\n        \r\n    \r\n",
+    "value": "# if there are problems, clear the graph\r\n\r\nCLEAR GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "De manière générale, un gros problème des données wikidata est le nombre important de doublons. Dans les cas des pilotes de la WW1, on se retrouve souvent avec plusieurs labels, dates de naissances/mort, nationalité etc. \r\n\r\nPour illuster, nous pouvons prendre le cas Freiherr Horst Julius Treusch von Buttlar-Brandenfels (Q102502). Le SELECT suivant démontre qu'il possède deux dates de naissance et deux dates de mort distinctes.",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nSELECT ?type ?date WHERE {\r\n  VALUES ?item { wd:Q102502 }\r\n  { ?item wdt:P569 ?date . BIND(\"birth\" AS ?type) }\r\n  UNION\r\n  { ?item wdt:P570 ?date . BIND(\"death\" AS ?type) }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Ce premier INSERT se concentre donc sur les données de base des pilotes. Pour éviter les doublons inutiles, la fonction SAMPLE est appliquée aux labels. Dans les cas des dates de naissance et mort, nous prenons la plus petite. \r\n## INSERT n°1",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\r\nPREFIX ex:   <http://example.org/schema/>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item rdfs:label ?en .\r\n    ?item wdt:P569 ?birthDate .\r\n    ?item wdt:P570 ?deathDate .\r\n    ?item wdt:P106 wd:Q2095549 .\r\n    ?item rdf:type wd:Q5 .\r\n    ?item ex:birthYear ?birthYear .\r\n    ?item ex:deathYear ?deathYear .\r\n  }\r\n}\r\nWHERE {\r\n  {\r\n    # on prend un label et les dates de naissance et mort les plus petites\r\n    SELECT ?item\r\n           (SAMPLE(?en0)  AS ?en)\r\n           (MIN(?bd0)     AS ?birthDate)\r\n           (MIN(?dd0)     AS ?deathDate)\r\n    WHERE {\r\n      SERVICE <https://query.wikidata.org/sparql> {\r\n        ?item wdt:P106 wd:Q2095549 ;\r\n              wdt:P607 wd:Q361 ;\r\n              wdt:P31  wd:Q5 ;\r\n              wdt:P569 ?bd0 ;\r\n              rdfs:label ?en0 .\r\n        FILTER(LANG(?en0) = \"en\")\r\n        OPTIONAL { ?item wdt:P570 ?dd0 . }\r\n      }\r\n    }\r\n    GROUP BY ?item\r\n  }\r\n\r\n  BIND(xsd:integer(SUBSTR(STR(?birthDate),1,4)) AS ?birthYear)\r\n  BIND(IF(BOUND(?deathDate),\r\n          xsd:integer(SUBSTR(STR(?deathDate),1,4)),\r\n          0) AS ?deathYear)\r\n\r\n  FILTER(?birthYear >= 1820 && ?birthYear <= 1908)\r\n  FILTER(?deathYear = 0 || (?deathYear >= 1910 && ?deathYear <= 2000))\r\n\r\n  FILTER NOT EXISTS { ?item rdfs:label ?en }\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Grâce à l’agrégation dans la sous-requête SAMPLE pour les labels et MIN pour les dates, on réduit à une seule ligne par pilote. Le SELECT de contrôle (comparant COUNT à COUNT(DISTINCT)) retourne donc 0, alors qu’autrement on obtiendrait des doublons de labels à cause des multiples valeurs de dates.",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX ex:   <http://example.org/schema/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT ?item\r\n       (COUNT(?l) AS ?totalLabels)\r\n       (COUNT(DISTINCT ?l) AS ?distinctLabels)\r\n       ((COUNT(?l)-COUNT(DISTINCT ?l)) AS ?dupLabels)\r\nWHERE {\r\n  ?item ex:birthYear ?y ;\r\n        rdfs:label ?l .\r\n}\r\nGROUP BY ?item\r\nHAVING (?dupLabels > 0)\r\nORDER BY DESC(?dupLabels) ?item\r\nLIMIT 50\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## INSERT n°2: P27 filtré\r\nIMPORTANT: P27 (country of citizenship) est central pour déterminer l'allégeance. Néanmoins, c'est également une source de duplication, par exemple, un as peut avoir comme P27: Germany, German Empire, Austria, Nazi Germany etc. SIMULTANEMENT. \r\n\r\nHeureusement, les pays dans wikidata possèdent la propriété P571 \"inception\", qui permet de filtrer pour les pays créés avant la Première Guerre mondiale. Egalement, il faut faire attention à prendre des pays existant durant 14-18, pour cela, il existe P576 \"dissolved, abolished or demolished date\".\r\n\r\nLe INSERT suivant permet ainsi de grandement faciliter la tâche et réduire le nombre enflé de triplets. \r\n\r\nPar contre, dans le cas où un P27 avant 14-18 n'existe pas, ou P571 n'existe pas, on insert la valeur de P27. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\r\nPREFIX ex:   <http://example.org/schema/>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P27 ?country .\r\n  }\r\n}\r\nWHERE {\r\n  ?item ex:birthYear ?y .\r\n\r\n  {\r\n    SELECT DISTINCT ?item ?country\r\n    WHERE {\r\n      SERVICE <https://query.wikidata.org/sparql> {\r\n        ?item wdt:P27 ?country .\r\n        # only les pays qui existaient avant WW1\r\n        FILTER EXISTS {\r\n          ?country wdt:P571 ?inc .\r\n          FILTER(?inc <= \"1914-07-28T00:00:00Z\"^^xsd:dateTime)\r\n        }\r\n        FILTER NOT EXISTS {\r\n          ?country wdt:P576 ?end .\r\n          FILTER(?end < \"1914-07-28T00:00:00Z\"^^xsd:dateTime)\r\n        }\r\n      }\r\n    }\r\n  }\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?item wdt:P27 ?country\r\n    }\r\n  }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Le SELECT suivant permet ainsi de bien vérifier qu'il n'y ait pas de doublons inutiles dans allegograph. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nSELECT ?item ((COUNT(?c)-COUNT(DISTINCT ?c)) AS ?double)\r\nWHERE { ?item wdt:P27 ?c }\r\nGROUP BY ?item\r\nHAVING (?double > 0)\r\nLIMIT 20\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Néanmoins, avec notre méthode, on se retrouve avec un nombre de pilotes sans P27. Comme le SELECT suivant le démontre. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# 252 pilotes sans P27. \r\nPREFIX ex:  <http://example.org/schema/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?missingP27)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item ex:birthYear ?y .\r\n    FILTER NOT EXISTS { ?item wdt:P27 ?_c }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Pour ces cas, on prend le P27 de wikidata, cela permet ainsi d'avoir un P27 malgré tout. \r\n## INSERT n°3: P27 restant",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:   <http://example.org/schema/>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P27 ?country .\r\n  }\r\n}\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item ex:birthYear ?y .\r\n    FILTER NOT EXISTS { ?item wdt:P27 ?_local }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P27 ?country .\r\n  }\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> { ?item wdt:P27 ?country }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Le SELECT suivant montre que le nombre de P27 manquant a ainsi été réduit de 252 à 104.",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX ex:  <http://example.org/schema/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?stillMissingP27)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item ex:birthYear ?y .\r\n    FILTER NOT EXISTS { ?item wdt:P27 ?_c }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Ce nombre ne peut par ailleurs pas être plus réduit car il correspond simplement aux pilotes sans P27 dans wikidata, comme le SELECT suivant le démontre",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) AS ?missingP27_en)\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?item WHERE {\r\n      ?item wdt:P106 wd:Q2095549 ;\r\n            wdt:P607 wd:Q361 ;\r\n            wdt:P31  wd:Q5 ;\r\n            wdt:P569 ?bd .\r\n      OPTIONAL { ?item wdt:P570 ?dd }\r\n      FILTER(YEAR(?bd) >= 1820 && YEAR(?bd) <= 1908)\r\n      FILTER(!BOUND(?dd) || (YEAR(?dd) >= 1910 && YEAR(?dd) <= 2000))\r\n      FILTER NOT EXISTS { ?item wdt:P27 [] }\r\n      FILTER EXISTS { ?item rdfs:label ?l . FILTER(LANG(?l)=\"en\") }\r\n    }\r\n  }\r\n}\r\n",
     "metadata": {}
   },
   {
@@ -50,13 +158,43 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Number of persons with more than one label : 196\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(?s) AS ?acesMultipleLabels)\r\nWHERE {\r\n  {\r\n    SELECT ?s (COUNT(?label) AS ?labelCount)\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s rdfs:label ?label\r\n      }\r\n    }\r\n    GROUP BY ?s\r\n    HAVING (?labelCount > 1)\r\n  }\r\n}\r\n",
+    "value": "# compte combien de pilotes dans le GRAPH : environ 1065\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX wd:   <http://www.wikidata.org/entity/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?nbPilots)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P106 wd:Q2095549 .\r\n  }\r\n}\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Number of persons having more than one country\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?person (COUNT(?country) AS ?n)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?person wdt:P27 ?country .\r\n  }\r\n}\r\nGROUP BY ?person\r\nHAVING (?n > 1)\r\n",
+    "value": "### verify relevant added data\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:   <http://example.org/schema/>\r\nPREFIX wd:   <http://www.wikidata.org/entity/>\r\n\r\nSELECT ?item ?label ?birthDate ?birthYear ?deathDate ?deathYear\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P106 wd:Q2095549 .\r\n    OPTIONAL { ?item rdfs:label ?label }\r\n    OPTIONAL { ?item wdt:P569 ?birthDate }\r\n    OPTIONAL { ?item ex:birthYear ?birthYear }\r\n    OPTIONAL { ?item wdt:P570 ?deathDate }\r\n    OPTIONAL { ?item ex:deathYear ?deathYear }\r\n  }\r\n}\r\nORDER BY ?birthYear ?label\r\nLIMIT 50\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons with more than one label : 0 !!!! :)\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(?s) AS ?acesMultipleLabels)\r\nWHERE {\r\n  {\r\n    SELECT ?s (COUNT(?label) AS ?labelCount)\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s rdfs:label ?label\r\n      }\r\n    }\r\n    GROUP BY ?s\r\n    HAVING (?labelCount > 1)\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Le INSERT précédent a créé plusieurs doublons à cause des country labels, en effet, un as peut avoir une entrée \"Great Britain\", \"The United Kingdom\" etc.",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Ce SELECT démontre d'où proviennent les doublons\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:   <http://example.org/schema/>\r\nPREFIX wd:   <http://www.wikidata.org/entity/>\r\n\r\n\r\nSELECT ?item\r\n       (COUNT(DISTINCT ?l)  AS ?nLabels)\r\n       (COUNT(DISTINCT ?bd) AS ?nBirthDates)\r\n       (COUNT(DISTINCT ?dd) AS ?nDeathDates)\r\n       (COUNT(DISTINCT ?by) AS ?nBirthYears)\r\n       (COUNT(DISTINCT ?dy) AS ?nDeathYears)\r\n       (COUNT(DISTINCT ?c)  AS ?nCountries)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P106 wd:Q2095549 .\r\n    OPTIONAL { ?item rdfs:label ?l }\r\n    OPTIONAL { ?item wdt:P569 ?bd }\r\n    OPTIONAL { ?item wdt:P570 ?dd }\r\n    OPTIONAL { ?item ex:birthYear ?by }\r\n    OPTIONAL { ?item ex:deathYear ?dy }\r\n    OPTIONAL { ?item wdt:P27 ?c }\r\n  }\r\n}\r\nGROUP BY ?item\r\nHAVING (?nLabels > 1 || ?nBirthDates > 1 || ?nDeathDates > 1 || ?nCountries > 1)\r\nORDER BY DESC(?nLabels) DESC(?nCountries)\r\nLIMIT 50",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Le SELECT suivant démontre que 74 pilotes ont plus que un pays d'origine, tous avec 2. Grâce aux nombreux filtres, ce nombre est donc faible ~ \r\n6.7 %. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### personnes avec 1+ nationalités\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?person (COUNT(?country) AS ?n)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?person wdt:P27 ?country .\r\n  }\r\n}\r\nGROUP BY ?person\r\nHAVING (?n > 1)\r\nORDER BY DESC(?n)",
     "metadata": {}
   },
   {
@@ -68,25 +206,19 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "### Number of persons from France\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?country (COUNT(*) AS ?n)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s wdt:P27 ?country .\r\n  }\r\n  FILTER(?country = wd:Q142)  # Q142 = France\r\n}\r\nGROUP BY ?country",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "### clear graph to start again in case\r\n\r\nCLEAR GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
     "value": "### Add the label to the country: CONSTRUCT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nCONSTRUCT {\r\n  ?country rdfs:label ?countryLabel\r\n}\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?country rdfs:label ?countryLabel .\r\n    FILTER (lang(?countryLabel) = \"en\")\r\n  }\r\n}\r\n",
     "metadata": {}
   },
   {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## INSERT n°4 : country Label",
+    "metadata": {}
+  },
+  {
     "kind": 2,
     "language": "sparql",
-    "value": "### Add the label to the country: INSERT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nWITH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> \r\nINSERT {\r\n  ?country rdfs:label ?countryLabel\r\n} \r\nWHERE {    \r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> \r\n      {?s wdt:P27 ?country}\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n        BIND(?country as ?country)\r\n        BIND ( ?countryLabel as ?countryLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n  }\r\n}\r\n\r\n",
+    "value": "PREFIX wd:       <http://www.wikidata.org/entity/>\r\nPREFIX wdt:      <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd:       <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nWITH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\nINSERT {\r\n  ?country rdfs:label ?countryLabel .\r\n}\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?country\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P27 ?country .\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    SERVICE wikibase:label {\r\n      bd:serviceParam wikibase:language \"en\" .\r\n      ?country rdfs:label ?countryLabel\r\n    }\r\n  }\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?country rdfs:label ?countryLabel\r\n    }\r\n  }\r\n}\r\n\r\n\r\n",
     "metadata": {}
   },
   {
@@ -108,99 +240,21 @@
     "metadata": {}
   },
   {
-    "kind": 2,
-    "language": "sparql",
-    "value": "### Nombre de personnes DINSTINCT : 1070 individuals\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(DISTINCT ?s) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s a wd:Q5 .\r\n    }\r\n}\r\n\r\n",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "### Personnes avec choix aléatoire de modalités pour variables doubles\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT ?s (SAMPLE(?label) AS ?label) (MAX(?birthYear) AS ?birthYear)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s wdt:P27 ?country ;\r\n       rdfs:label ?label ;\r\n       wdt:P569 ?birthDate .\r\n\r\n    BIND(xsd:integer(?birthDate) AS ?birthYear)\r\n  }\r\n}\r\nGROUP BY ?s\r\nLIMIT 10\r\n\r\n",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md>\r\n        {?s wdt:P27 ?country ;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
-    "metadata": {}
-  },
-  {
     "kind": 1,
     "language": "markdown",
-    "value": "Il faut encore ajouter les awards CONSTRUCT, on distingue que tous les individus n'en ont pas et certains en ont plusieurs",
+    "value": "## INSERT n°5: Awards received\r\nNotre carnet d'exploration l'a démontré, P166 \"Awards received\" est une des propriétés les plus présentes pour les pilotes de 14-18. Sans surprise, certains n'en ont pas reçu et d'autres plusieurs. Pour éviter une multiplication de lignes, on procède en plusieurs étapes. La première consiste à insérer simplement les paires pilote-awards. \r\nIl faut aussi noter que l'INSERT suivant ajoute toutes les récompenses reçu par les hommes qui étaient pilotes durant la Première Guerre mondiale, cela inclut donc les récompenses post-1918. \r\n\r\nIl sera de toute façon facile d'écarter ces données par la suite si nécessaire aux analyses. ",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "## version CONSTRUCT\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item wdt:P166 ?award .\r\n  ?item rdfs:label ?itemLabel .\r\n  ?award rdfs:label ?awardLabel .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 ;\r\n          wdt:P166 ?award .\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n\r\n  }\r\n}\r\nLIMIT 10",
-    "metadata": {}
-  },
-  {
-    "kind": 1,
-    "language": "markdown",
-    "value": "Voici le INSERT pour ajouter les awards, notamment, le country of origin est également présent",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:   <http://example.org/schema/>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P166 ?award .\r\n  }\r\n}\r\nWHERE {\r\n  ?item ex:birthYear ?y .\r\n\r\n  {\r\n    SELECT DISTINCT ?item ?award\r\n    WHERE {\r\n      SERVICE <https://query.wikidata.org/sparql> {\r\n        ?item wdt:P166 ?award .\r\n      }\r\n    }\r\n  }\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?item wdt:P166 ?award\r\n    }\r\n  }\r\n}\r\n\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "PREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd:  <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P166 ?award .\r\n    ?item rdfs:label ?itemLabel .\r\n    ?award rdfs:label ?awardLabel .\r\n    ?award wdt:P495 ?awardCountry .\r\n    ?awardCountry rdfs:label ?awardCountryLabel .\r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 ;\r\n          wdt:P166 ?award .       # must have award\r\n\r\n    OPTIONAL { ?award wdt:P495 ?awardCountry . }\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }\r\n  }\r\n}\r\n",
-    "metadata": {}
-  },
-  {
-    "kind": 1,
-    "language": "markdown",
-    "value": "Comme avec le country, il faut ajouter les labels aux awards pour plus de clarité. ",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd:   <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nWITH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> \r\nINSERT {\r\n  ?award rdfs:label ?awardLabel .\r\n} \r\nWHERE {    \r\n  {\r\n    SELECT DISTINCT ?award\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?s wdt:P166 ?award .\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    SERVICE wikibase:label { \r\n      bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\" .\r\n      ?award rdfs:label ?awardLabel .\r\n    }\r\n  }\r\n}\r\n",
-    "metadata": {}
-  },
-  {
-    "kind": 1,
-    "language": "markdown",
-    "value": "Ce SELECT permet de vérifier les ajouts. On constate ~800 pilotes avec awards dont 2367 awards",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\nSELECT (COUNT(DISTINCT ?item) AS ?nbPilotes) (COUNT(?award) AS ?nbAwards)\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;\r\n          wdt:P607 wd:Q361 ;\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 ;\r\n          wdt:P166 ?award .\r\n    FILTER(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) > 1750 &&\r\n           xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) < 2001)\r\n  }\r\n}",
-    "metadata": {}
-  },
-  {
-    "kind": 1,
-    "language": "markdown",
-    "value": "En relation avec les questions de recherche, un élément important est l'allégeance. Le but est d'être capable d'extraire d'une manière ou d'une autre, la nation pour laquelle s'est battu l'individu. Premièrement, on regarde la \"Birth place\". ",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT DISTINCT ?ace ?aceLabel ?birthYear ?deathYear ?country ?placeOfBirth ?placeOfBirthLabel ?birthCountry ?birthCountryLabel\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n  \r\n    ?ace wdt:P106 wd:Q2095549 ;    # Occupation = flying ace\r\n         wdt:P607 wd:Q361 ;         # Conflict = World War I\r\n         wdt:P569 ?birthDate.\r\n    \r\n    OPTIONAL { ?ace wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?ace wdt:P27 ?country. }\r\n    OPTIONAL { \r\n      ?ace wdt:P19 ?placeOfBirth.\r\n      OPTIONAL { ?placeOfBirth wdt:P17 ?birthCountry. }  # <-- New: place -> country\r\n    }\r\n\r\n    BIND(REPLACE(str(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?birthYear)\r\n    FILTER(xsd:integer(?birthYear) > 1750 && xsd:integer(?birthYear) < 2001)\r\n\r\n    BIND(REPLACE(str(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (xsd:integer(?deathYear) > 1750 && xsd:integer(?deathYear) < 2001))\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\nORDER BY ASC(?birthDate)\r\nLIMIT 10\r\n",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "# Place of Birth CONSTRUCT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nCONSTRUCT {\r\n  ?item rdfs:label ?itemLabel .\r\n  ?item wdt:P569 ?birthYear .\r\n  ?item wdt:P570 ?deathYear .\r\n  ?item wdt:P27 ?country .\r\n  ?item wdt:P19 ?placeOfBirth .  \r\n  ?item wdt:P31 wd:Q5 .\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 ;      # World War I\r\n          wdt:P569 ?birthDate.\r\n\r\n    OPTIONAL { ?item wdt:P570 ?deathDate. }\r\n    OPTIONAL { ?item wdt:P27 ?country. }\r\n    OPTIONAL { ?item wdt:P19 ?placeOfBirth. }  \r\n\r\n    # Filter birth year\r\n    BIND(xsd:integer(SUBSTR(STR(?birthDate), 1, 4)) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    # Filter death year if available\r\n    BIND(xsd:integer(SUBSTR(STR(?deathDate), 1, 4)) AS ?deathYear)\r\n    FILTER(!BOUND(?deathDate) || (?deathYear > 1750 && ?deathYear < 2001))\r\n\r\n    BIND (?itemLabel as ?itemLabel)\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n",
-    "metadata": {}
-  },
-  {
-    "kind": 1,
-    "language": "markdown",
-    "value": "Voici plusieurs SELECT pour analyser les triplets",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "# Number of ace, award statements\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(*) AS ?p166_triples)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P166 ?award .\r\n  }\r\n}",
+    "value": "# top aces with most awards\r\n\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\n\r\nSELECT ?ace ?aceLabel (COUNT(DISTINCT ?award) AS ?awardCount)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P106 wd:Q2095549 ;\r\n         wdt:P166 ?award .\r\n    OPTIONAL { ?ace rdfs:label ?aceLabel }\r\n  }\r\n}\r\nGROUP BY ?ace ?aceLabel\r\nORDER BY DESC(?awardCount)\r\nLIMIT 20",
     "metadata": {}
   },
   {
@@ -210,15 +264,231 @@
     "metadata": {}
   },
   {
-    "kind": 2,
-    "language": "sparql",
-    "value": "# top awards avec country and label\r\n\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT\r\n  ?award\r\n  (SAMPLE(?awardLabel) AS ?label)         # one label per award\r\n  ?country\r\n  (SAMPLE(?countryLabel) AS ?countryName) # one label per country\r\n  (COUNT(*) AS ?n)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P166 ?award .\r\n    OPTIONAL { ?award rdfs:label ?awardLabel }\r\n    OPTIONAL {\r\n      ?award wdt:P495 ?country .\r\n      OPTIONAL { ?country rdfs:label ?countryLabel }\r\n    }\r\n  }\r\n}\r\nGROUP BY ?award ?country\r\nORDER BY DESC(?n)\r\nLIMIT 20\r\n",
+    "kind": 1,
+    "language": "markdown",
+    "value": "## INSERT n°6: awards - country of origin (P17)\r\nIci, on ajoute l'origine (P17) des awards. Evidemment, on se retrouve avec des récompenses qui ont plusieurs pays d'origine, mais tout est fait pour réduire au maximum ce nombre. Les mêmes filtres que pour P27 n'ont pas été appliqué étant donné que plusieurs décorations datent d'après 14-18. Dans ce cas, on ajoute le P17 qui existe, dans le cas où il peut y en avoir plusieurs, on prends ceux d'avant 1914.\r\n\r\nIl faut également faire attention à P17 dans Wikidata, qui ne correspond actuellement pas toujours à un pays, on utilise donc ?awardCountry wdt:P31 wd:Q6256 .",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "# top aces with most awards\r\n\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\n\r\nSELECT ?ace ?aceLabel (COUNT(DISTINCT ?award) AS ?awardCount)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P106 wd:Q2095549 ;\r\n         wdt:P166 ?award .\r\n    OPTIONAL { ?ace rdfs:label ?aceLabel }\r\n  }\r\n}\r\nGROUP BY ?ace ?aceLabel\r\nORDER BY DESC(?awardCount)\r\nLIMIT 20",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\r\nPREFIX ex:   <http://example.org/schema/>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?award wdt:P17 ?awardCountry .\r\n    ?awardCountry wdt:P31 wd:Q6256 .   \r\n  }\r\n}\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?award\r\n    WHERE {\r\n      ?item ex:birthYear ?y ;\r\n            wdt:P166 ?award .\r\n    }\r\n  }\r\n\r\n  {\r\n    SELECT DISTINCT ?award ?awardCountry\r\n    WHERE {\r\n      SERVICE <https://query.wikidata.org/sparql> {\r\n        ?award wdt:P17 ?awardCountry .\r\n        ?awardCountry wdt:P31 wd:Q6256 .   # On prend uniquement les vrais pays\r\n\r\n        FILTER EXISTS {\r\n          ?awardCountry wdt:P571 ?inc .\r\n          FILTER(?inc <= \"1914-07-28T00:00:00Z\"^^xsd:dateTime)\r\n        }\r\n        FILTER NOT EXISTS {\r\n          ?awardCountry wdt:P576 ?end .\r\n          FILTER(?end < \"1914-07-28T00:00:00Z\"^^xsd:dateTime)\r\n        }\r\n      }\r\n    }\r\n  }\r\n  FILTER NOT EXISTS { ?award wdt:P17 ?awardCountry }\r\n}\r\n\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# check pairs award / country\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:  <http://example.org/schema/>\r\n\r\nSELECT (COUNT(*) AS ?numPairs)\r\nWHERE {\r\n  { SELECT DISTINCT ?award ?country\r\n    WHERE {\r\n      ?item ex:birthYear ?y ;\r\n            wdt:P166     ?award .\r\n      ?award wdt:P17     ?country .\r\n    }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# verifie les potentielles doublons: 0. \r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?award ?country (COUNT(*) AS ?triples)\r\nWHERE { ?award wdt:P17 ?country }\r\nGROUP BY ?award ?country\r\nHAVING (?triples > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# compte les awards avec plusieurs origines différentes : seulement 2. \r\n\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:  <http://example.org/schema/>\r\n\r\nSELECT ?award (COUNT(DISTINCT ?country) AS ?nCountries)\r\nWHERE {\r\n  ?item ex:birthYear ?y ;\r\n        wdt:P166     ?award .\r\n  ?award wdt:P17     ?country .\r\n}\r\nGROUP BY ?award\r\nHAVING (?nCountries > 1)\r\nORDER BY DESC(?nCountries)\r\nLIMIT 50",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Néanmoins, comme avec P27, nos filtres risquent d'exclure plusieurs P17. Voici donc un insert pour insérer la valeur de P17 présente si une n'existe pas dans le graph. \r\n## INSERT n°7 : P17 complémentaire",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:   <http://example.org/schema/>\r\nPREFIX wd:   <http://www.wikidata.org/entity/>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?award wdt:P17 ?awardCountry .\r\n    ?awardCountry wdt:P31 wd:Q6256 . \r\n  }\r\n}\r\nWHERE {\r\n  {  # Awards without P17 locally\r\n    SELECT DISTINCT ?award\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?item ex:birthYear ?y ;\r\n              wdt:P166     ?award .\r\n        FILTER NOT EXISTS { ?award wdt:P17 ?_local }\r\n      }\r\n    }\r\n    ORDER BY ?award\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    SELECT DISTINCT ?award ?awardCountry\r\n    WHERE {\r\n      ?award wdt:P17 ?awardCountry .\r\n      ?awardCountry wdt:P31 wd:Q6256 .   # seuls des vrais pays\r\n    }\r\n  }\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?award wdt:P17 ?awardCountry\r\n    }\r\n  }\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX ex:  <http://example.org/schema/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(DISTINCT ?award) AS ?awardsMissingP17)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item ex:birthYear ?y ; wdt:P166 ?award .\r\n    FILTER NOT EXISTS { ?award wdt:P17 ?_ }\r\n  }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Il n'existe alors 224 \"awards sans P17\". Sans spécifier que P17 doit être un pays, on arrivait à 57, mais les données étaient alors \"corrompues\".",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## INSERT n°8 : Award labels\r\nComme avec le country, il faut ajouter les labels aux awards pour plus de clarité. Pour éviter les problèmes, le language sélectionné est \"en\"",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX ex:   <http://example.org/schema/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd:   <http://www.bigdata.com/rdf#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?award rdfs:label ?awardLabel .\r\n  }\r\n}\r\nWHERE {\r\n  { SELECT DISTINCT ?award WHERE { ?item ex:birthYear ?y ; wdt:P166 ?award } }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    SERVICE wikibase:label {\r\n      bd:serviceParam wikibase:language \"en\" .\r\n      ?award rdfs:label ?awardLabel .\r\n    }\r\n  }\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?award rdfs:label ?awardLabel\r\n    }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Ce SELECT permet de vérifier les ajouts. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?item ?itemLabel ?award ?awardLabel ?country ?countryLabel\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P166 ?award .\r\n\r\n    OPTIONAL { ?item rdfs:label ?itemLabel }\r\n    OPTIONAL { ?award rdfs:label ?awardLabel }\r\n\r\n    OPTIONAL {\r\n      ?award wdt:P17 ?country .\r\n      ?country wdt:P31 wd:Q6256 .   # ✅ Only real countries\r\n      OPTIONAL { ?country rdfs:label ?countryLabel }\r\n    }\r\n  }\r\n}\r\nORDER BY ?awardLabel\r\nLIMIT 50\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# compte les P17 avec label manquant: 17. \r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX ex:   <http://example.org/schema/>\r\n\r\nSELECT (COUNT(DISTINCT ?country) AS ?missing)\r\nWHERE {\r\n  ?item ex:birthYear ?y ; wdt:P166 ?award .\r\n  ?award wdt:P17 ?country .\r\n  FILTER NOT EXISTS { ?country rdfs:label ?l }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Pour les analyses statistiques, un élément des plus pertinent est les \"awarding events\". En effet, les awards dates peuvent être relevées grâce à pq:P585. \r\n## INSERT n°9: award dates",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:    <http://www.wikidata.org/prop/>\r\nPREFIX ps:   <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:   <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX ex:   <http://example.org/schema/>\r\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd:   <http://www.bigdata.com/rdf#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item ex:awardDate ?awardDate .\r\n\r\n    ?award rdfs:label ?awardLabel .\r\n    ?awardCountry rdfs:label ?awardCountryLabel .\r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;   \r\n          wdt:P607 wd:Q361 ;       \r\n          wdt:P31 wd:Q5 ;\r\n          p:P166 ?st .\r\n    ?st ps:P166 ?award .\r\n    OPTIONAL { ?st pq:P585 ?t585 }  # preferred date\r\n    OPTIONAL { ?st pq:P580 ?t580 }  # fallback start date\r\n    BIND(COALESCE(?t585, ?t580) AS ?awardDate)\r\n    FILTER(BOUND(?awardDate))\r\n\r\n    OPTIONAL {\r\n      ?award wdt:P17 ?awardCountry .\r\n      ?awardCountry wdt:P31 wd:Q6256 .\r\n    }\r\n\r\n    SERVICE wikibase:label {\r\n      bd:serviceParam wikibase:language \"en\" .\r\n      ?award rdfs:label ?awardLabel .\r\n      ?awardCountry rdfs:label ?awardCountryLabel .\r\n    }\r\n  }\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?item ex:awardDate ?awardDate .\r\n    }\r\n  }\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Vérifie l'ajout; nous avons 311 award dates (donc awarding events)\r\n\r\nPREFIX ex: <http://example.org/schema/>\r\n\r\nSELECT (COUNT(*) AS ?totalAwardDates)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item ex:awardDate ?date .\r\n  }\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# exemple de l'état du GRAPH\r\n\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:   <http://example.org/schema/>\r\n\r\nSELECT ?ace ?aceLabel ?award ?awardLabel ?awardDate ?awardCountryLabel\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P166 ?award ;\r\n         ex:awardDate ?awardDate .\r\n    OPTIONAL { ?ace rdfs:label ?aceLabel }\r\n    OPTIONAL { ?award rdfs:label ?awardLabel }\r\n    OPTIONAL {\r\n      ?award wdt:P17 ?awardCountry .\r\n      OPTIONAL { ?awardCountry rdfs:label ?awardCountryLabel }\r\n    }\r\n  }\r\n}\r\nLIMIT 50\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# deux dates sont au format \"string\"\r\n\r\nPREFIX ex:  <http://example.org/schema/>\r\n\r\nSELECT (COUNT(*) AS ?totalDates)\r\n       (SUM(IF(isLiteral(?d),1,0)) AS ?literalDates)\r\n       (SUM(IF(!isLiteral(?d),1,0)) AS ?nonLiteralDates)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s ex:awardDate ?d .\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# on confirme de quoi il s'agit\r\nPREFIX ex:  <http://example.org/schema/>\r\nPREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT ?item ?itemLabel ?bad\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item ex:awardDate ?bad .\r\n    FILTER(!isLiteral(?bad))\r\n    OPTIONAL { ?item rdfs:label ?itemLabel }\r\n  }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# on s'en débarasse, cela nous laisse 309 dates\r\nPREFIX ex: <http://example.org/schema/>\r\n\r\nDELETE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s ex:awardDate ?d .\r\n  }\r\n}\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s ex:awardDate ?d .\r\n    FILTER(!isLiteral(?d))\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "## compte les awarding events de 14-18 : seuls 74. \r\n\r\nPREFIX ex:  <http://example.org/schema/>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT (COUNT(*) AS ?duringWW1)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?s ex:awardDate ?d .\r\n    BIND(\r\n      IF(datatype(?d)=xsd:dateTime, ?d, xsd:dateTime(?d))\r\n      AS ?dt\r\n    )\r\n    FILTER(?dt >= \"1914-07-28T00:00:00Z\"^^xsd:dateTime &&\r\n           ?dt <= \"1918-11-11T23:59:59Z\"^^xsd:dateTime)\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## INSERT n°10: Allégeance",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "En relation avec les questions de recherche, un élément important est l'allégeance. Le but est d'être capable d'extraire d'une manière ou d'une autre, la nation pour laquelle s'est battu l'individu. Dans le carnet d'exploration, il a été démontré que l'allégeance n'est que peu présente.\r\n\r\nMalgré tout, voici comme l'on procède: \r\n\r\n1# : on prend l'allégeance si elle correspond à un pays de 14-18.\r\n\r\n2# : on prend le P27 (country of citizenship) déjà présent dans le graph et trié. \r\n\r\nNotre base de données possède déjà P27 (country of citizenship) ce qui, à une époque où les déplacement sont rares, peut être plutôt fiable. Les situations vont être particulièrement compliquées pour les régions de l'empire austro-hongrois etc. Pour l'exercice, il est possible d'éviter ces cas. Pour être aussi précis que possible, l'allégeance est ajoutée lorsqu'elle est présente, autrement, on regarde les unités de la WW1 ou dernièrement, P27. Etant donné qu'il existe plusieurs P27 et autres, il faut faire attention à ne rajouter que 1 triplet pour chaque as.\r\n\r\nIl aurait été possible d'encore regarder l'unité ainsi que le pays de celle-ci. Néanmoins cela ne concerne qu'une minorité de pilotes, complique ENORMEMENT la chose est reste très peu fiable. La méthode choisie est donc largement valide. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# new version working\r\nPREFIX franzOption_serviceTimeout: <franz:900>\r\nPREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:    <http://www.wikidata.org/prop/>\r\nPREFIX ps:   <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:   <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX ex:   <http://example.org/schema/>\r\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P945 ?chosen .\r\n  }\r\n}\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace ex:birthYear ?y .\r\n  }\r\n\r\n  # local fallback: deterministically pick one citizenship P27 if available\r\n  {\r\n    SELECT ?ace (MIN(STR(?c)) AS ?cStr)\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?ace ex:birthYear ?y ; wdt:P27 ?c .\r\n      }\r\n    }\r\n    GROUP BY ?ace\r\n  }\r\n  BIND(IRI(?cStr) AS ?localP27)\r\n\r\n  # On cherche en 1er un P945 valide pour 14-18\r\n  OPTIONAL {\r\n    SERVICE SILENT <https://query.wikidata.org/sparql> {\r\n      BIND(\"1914-07-28T00:00:00Z\"^^xsd:dateTime AS ?wStart)\r\n      BIND(\"1918-11-11T00:00:00Z\"^^xsd:dateTime AS ?wEnd)\r\n\r\n      ?ace p:P945 ?st .\r\n      ?st ps:P945 ?cand .\r\n\r\n      OPTIONAL { ?st pq:P585 ?when }  # statement time\r\n      OPTIONAL { ?st pq:P580 ?from }  # start date\r\n      OPTIONAL { ?st pq:P582 ?to }    # end date\r\n      OPTIONAL { ?cand wdt:P571 ?cStart } # country start\r\n      OPTIONAL { ?cand wdt:P576 ?cEnd }   # country end\r\n\r\n      # Candidate allegiance must overlap WW1\r\n      FILTER(\r\n        (BOUND(?when) && ?when >= ?wStart && ?when <= ?wEnd) ||\r\n        (!BOUND(?when) &&\r\n          (!BOUND(?from) || ?from <= ?wEnd) &&\r\n          (!BOUND(?to)   || ?to   >= ?wStart)) ||\r\n        (!BOUND(?when) && !BOUND(?from) && !BOUND(?to) &&\r\n          (!BOUND(?cStart) || ?cStart <= ?wEnd) &&\r\n          (!BOUND(?cEnd)   || ?cEnd   >= ?wStart))\r\n      )\r\n\r\n      # Country itself must have existed during WW1\r\n      FILTER(!BOUND(?cEnd) || ?cEnd >= ?wStart)\r\n      FILTER(!BOUND(?cStart) || ?cStart <= ?wEnd)\r\n\r\n      # This binds the valid P945 candidate\r\n      BIND(?cand AS ?wdAlleg)\r\n    }\r\n  }\r\n\r\n  # Precedence: WD P945 (if valid) first, otherwise local citizenship P27\r\n  BIND(COALESCE(?wdAlleg, ?localP27) AS ?chosen)\r\n  FILTER(BOUND(?chosen))\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?ace wdt:P945 ?any .\r\n    }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# combien d'as ont maintenant un allégeance:  961 sur 1065, plutôt suffisant\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX ex:  <http://example.org/schema/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithAllegiance)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace ex:birthYear ?y .\r\n    ?ace wdt:P945 ?alleg .\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "## combien ont plus d'une allégeance: seulement 4. \r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?ace (COUNT(DISTINCT ?alleg) AS ?allegCount)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P945 ?alleg .\r\n  }\r\n}\r\nGROUP BY ?ace\r\nHAVING(?allegCount > 1)\r\nORDER BY DESC(?allegCount)\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "## check the data: labels and all\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT distinct ?ace ?alleg ?label\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P945 ?alleg .\r\n    OPTIONAL { ?alleg rdfs:label ?label . }\r\n  }\r\n}\r\nORDER BY ?ace\r\nLIMIT 50",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## INSERT n°12: Place of birth\r\nLes requêtes suivantes concernent l'ajout potentiel de place of birth. Sans surprise, les données de Wikidata sont également très peu uniformisées. La \"Place of Birth\" (P19) est parfois une province, une ville, un état, un pays etc. Pour les P19 avec plusieurs P17, ils ont ici tous été insérés, il s'agit par ailleurs d'une minorité (voir explore_wikidata) et pourra être géré plus tard. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Place of birth check\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT DISTINCT \r\n  ?ace ?aceLabel \r\n  ?birthYear \r\n  ?deathYear \r\n  ?country ?countryLabel \r\n  ?placeOfBirth ?placeOfBirthLabel \r\n  ?birthCountry ?birthCountryLabel\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;    # Occupation = flying ace\r\n       wdt:P607 wd:Q361 ;        # Conflict = WWI\r\n       wdt:P569 ?birthDate.\r\n  \r\n  OPTIONAL { ?ace wdt:P570 ?deathDate. }\r\n  OPTIONAL { ?ace wdt:P27 ?country. }\r\n  OPTIONAL { \r\n    ?ace wdt:P19 ?placeOfBirth.\r\n    OPTIONAL { ?placeOfBirth wdt:P17 ?birthCountry. }\r\n  }\r\n\r\n  BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?birthYear)\r\n  FILTER(xsd:integer(?birthYear) > 1750 && xsd:integer(?birthYear) < 2001)\r\n\r\n  BIND(REPLACE(STR(?deathDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?deathYear)\r\n  FILTER(!BOUND(?deathDate) || (xsd:integer(?deathYear) > 1750 && xsd:integer(?deathYear) < 2001))\r\n\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nORDER BY ASC(?birthDate)\r\nLIMIT 10\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Le INSERT",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd:   <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?item wdt:P19 ?placeOfBirth .\r\n    ?placeOfBirth rdfs:label ?placeLabel .\r\n    ?placeOfBirth wdt:P17 ?birthCountry .\r\n    ?birthCountry rdfs:label ?birthCountryLabel .\r\n  }\r\n}\r\nWHERE {\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    ?item wdt:P106 wd:Q2095549 ;   # flying ace\r\n          wdt:P607 wd:Q361 ;       # WWI\r\n          wdt:P569 ?birthDate ;\r\n          wdt:P31 wd:Q5 .\r\n    OPTIONAL { ?item wdt:P19 ?placeOfBirth .\r\n               OPTIONAL { ?placeOfBirth wdt:P17 ?birthCountry . }\r\n    }\r\n\r\n    BIND(xsd:integer(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?birthYear)\r\n    FILTER(?birthYear > 1750 && ?birthYear < 2001)\r\n\r\n    SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n  }\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# check du INSERT: 1025 as avec Place of Birth sur 1065\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithBirthPlace)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P19 ?place .\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Le select suivant démontre l'état des Labels dans le GRAPH. Nous observons qu'il existe certains pays, pilotes sans labels. Mais il s'agit d'une minorité. Les Place of Birth Labels manquent néanmoins. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT\r\n  (COUNT(DISTINCT ?ace) AS ?totalAces)\r\n  (COUNT(DISTINCT ?aceWithLabel) AS ?acesWithLabels)\r\n  (COUNT(DISTINCT ?placeOfBirth) AS ?places)\r\n  (COUNT(DISTINCT ?placeWithLabel) AS ?placesWithLabels)\r\n  (COUNT(DISTINCT ?birthCountry) AS ?countries)\r\n  (COUNT(DISTINCT ?countryWithLabel) AS ?countriesWithLabels)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    OPTIONAL { ?ace wdt:P19 ?placeOfBirth }\r\n    OPTIONAL { ?placeOfBirth wdt:P17 ?birthCountry }\r\n\r\n    OPTIONAL { ?ace rdfs:label ?aceWithLabel }\r\n    OPTIONAL { ?placeOfBirth rdfs:label ?placeWithLabel }\r\n    OPTIONAL { ?birthCountry rdfs:label ?countryWithLabel }\r\n  }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## INSERT n°13: Place of Birth Labels\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nINSERT {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?place rdfs:label ?placeLabel .\r\n  }\r\n}\r\nWHERE {\r\n  {\r\n    SELECT DISTINCT ?place\r\n    WHERE {\r\n      GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n        ?ace wdt:P19 ?place .\r\n      }\r\n    }\r\n  }\r\n\r\n  SERVICE <https://query.wikidata.org/sparql> {\r\n    SERVICE wikibase:label {\r\n      bd:serviceParam wikibase:language \"en\" .\r\n      ?place rdfs:label ?placeLabel .\r\n    }\r\n  }\r\n\r\n  FILTER NOT EXISTS {\r\n    GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n      ?place rdfs:label ?placeLabel .\r\n    }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "## check SELECT\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT ?place (SAMPLE(?placeLabel) AS ?label) \r\n       (SAMPLE(?countryLabel) AS ?country) \r\n       (COUNT(DISTINCT ?ace) AS ?nbAces)\r\nWHERE {\r\n  GRAPH <https://github.com/samohTDNM/as-ww1/blob/main/docs/wikidata-import.md> {\r\n    ?ace wdt:P19 ?place .\r\n    OPTIONAL { ?place rdfs:label ?placeLabel . }\r\n    OPTIONAL { \r\n      ?place wdt:P17 ?country .\r\n      OPTIONAL { ?country rdfs:label ?countryLabel . }\r\n    }\r\n  }\r\n}\r\nGROUP BY ?place\r\nORDER BY DESC(?nbAces)\r\n",
     "metadata": {}
   }
 ]

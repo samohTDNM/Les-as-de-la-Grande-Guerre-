@@ -38,7 +38,7 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "   ## Count and inspect occupations and fields of work\r\n   SELECT (COUNT(*) as ?eff)\r\n    WHERE {\r\n        ?item wdt:P31 wd:Q5;  # Any instance of a human.\r\n\r\n            wdt:P106 wd:Q2095549;  # ace pilots\r\n            wdt:P607 wd:Q361; # WW1\r\n            # wdt:P410 ?rank;  # military rank\r\n            # wdt:P166 ?award; # awards received\r\n    }  \r\n    LIMIT 20",
+    "value": "   ## Count and inspect occupations and fields of work\r\n   SELECT (COUNT(*) as ?eff)\r\n    WHERE {\r\n        ?item wdt:P31 wd:Q5;  # Any instance of a human.\r\n\r\n            wdt:P106 wd:Q2095549;  # ace pilots\r\n            wdt:P607 wd:Q361; # WW1\r\n            wdt:P410 ?rank;  # military rank\r\n            wdt:P166 ?award; # awards received\r\n    }  \r\n    LIMIT 20",
     "metadata": {}
   },
   {
@@ -80,49 +80,199 @@
   {
     "kind": 2,
     "language": "sparql",
-    "value": "# count people with awards\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?peopleWithAwards)\r\nWHERE {\r\n  ?item wdt:P31 wd:Q5 ;\r\n        wdt:P106 wd:Q2095549 ;\r\n        wdt:P607 wd:Q361 ;\r\n        wdt:P569 ?birthDate ;\r\n        wdt:P166 ?award .  # has at least one award\r\n\r\n  BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n  FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n}",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "# requête qui compte les as qui ont au moins un \"award event\"\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\nPREFIX p:  <http://www.wikidata.org/prop/>\r\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq: <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithAwardDate)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P166 ?st .\r\n  ?st ps:P166 ?award .\r\n  ?st pq:P585 ?date .  # point in time (award date)\r\n}",
-    "metadata": {}
-  },
-  {
-    "kind": 1,
-    "language": "markdown",
-    "value": "Similairement, la requête suivante se concentre sur le nombre DISTINCT de \"awarding events\" distinct en relation à la WW1",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
-    "value": "PREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\n\r\nSELECT (COUNT(DISTINCT ?st) AS ?awardEventsWithDate)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P166 ?st .\r\n  ?st  ps:P166 ?award ;\r\n       pq:P585 ?date .\r\n  # Optional: ignore deprecated statements\r\n  FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }\r\n}",
-    "metadata": {}
-  },
-  {
-    "kind": 2,
-    "language": "sparql",
     "value": "# explore branch and rank\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT\r\n  (COUNT(DISTINCT ?ace) AS ?acesTotal)\r\n  (COUNT(DISTINCT ?aceRank) AS ?withRank)\r\n  (COUNT(DISTINCT ?aceBranch) AS ?withBranch)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  OPTIONAL { ?ace wdt:P410 ?rank . BIND(?ace AS ?aceRank) }\r\n  OPTIONAL { ?ace wdt:P241 ?branch . BIND(?ace AS ?aceBranch) }\r\n}",
     "metadata": {}
   },
   {
     "kind": 1,
     "language": "markdown",
-    "value": "la query précédente permet de rendre compte de la proportion de la présence du rank et branch parmi les aces. ",
+    "value": "La requête précédente a démontré que le rang et la branch sont relativement présente: environ pour la moitié des as. Néanmoins, la branche est souvent \"air force\" ce qui n'apporte pas d'informations pertinentes.\r\n",
     "metadata": {}
   },
   {
     "kind": 2,
     "language": "sparql",
-    "value": "# unit membership\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\nPREFIX p:  <http://www.wikidata.org/prop/>\r\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq: <http://www.wikidata.org/prop/qualifier/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithUnitDates)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P463 ?st .\r\n  ?st ps:P463 ?unit .\r\n  VALUES ?q { pq:P580 pq:P582 }  # start/end time\r\n  ?st ?q ?t .\r\n}\r\n",
+    "value": "PREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithUnit)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;   # flying ace\r\n       wdt:P607 wd:Q361 ;       # WWI\r\n       wdt:P31  wd:Q5 ;         # human\r\n       wdt:P463 ?unit .         # member of (unit/organization)\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# unit dates\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\nPREFIX p:  <http://www.wikidata.org/prop/>\r\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq: <http://www.wikidata.org/prop/qualifier/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithUnitDates)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P463 ?st .\r\n  ?st ps:P463 ?unit .\r\n  VALUES ?q { pq:P580 pq:P582 }  # start/end time\r\n  ?st ?q ?t .\r\n}\r\n",
     "metadata": {}
   },
   {
     "kind": 1,
     "language": "markdown",
     "value": "La requête précédente démontre que seuls 10 as possèdent réellement la classe membership, entièrement insuffisant pour des analyses statistiques. ",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## Awards\r\nLa requête générale sur les propriétés des pilotes de la Première Guerre mondiale dans wikidata a démontré que les \"award received\" est la plus commune. Il s'agit donc creuser la question, notamment en se penchant sur les dates auxquelles les décorations ont été décernées. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# ce select permet de se rendre compte de la situation. Ici, les décorations peuvent être pré ou post WW1\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?pilot ?pilotLabel ?award ?awardLabel ?date\r\nWHERE {\r\n  ?pilot wdt:P106 wd:Q2095549 ;   # occupation: flying ace\r\n         wdt:P607 wd:Q361 ;       # conflict: WWI\r\n         p:P166 ?statement .      # award received \r\n\r\n  ?statement ps:P166 ?award ;     # actual award\r\n             pq:P585 ?date .      # date of award \r\n\r\n  SERVICE wikibase:label {\r\n    bd:serviceParam wikibase:language \"en\" .\r\n  }\r\n}\r\nORDER BY ?date",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# count people with awards\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\n\r\nSELECT (COUNT(DISTINCT ?item) AS ?peopleWithAwards)\r\nWHERE {\r\n  ?item wdt:P31 wd:Q5 ;\r\n        wdt:P106 wd:Q2095549 ;\r\n        wdt:P607 wd:Q361 ;\r\n        wdt:P569 ?birthDate ;\r\n        wdt:P166 ?award .  # has at least one award\r\n\r\n  BIND(REPLACE(STR(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n  FILTER(xsd:integer(?year) > 1850 && xsd:integer(?year) < 1925)\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# requête qui compte les as qui ont au moins un \"award event\"\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt:<http://www.wikidata.org/prop/direct/>\r\nPREFIX p:  <http://www.wikidata.org/prop/>\r\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq: <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithAwardDate)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P166 ?st .\r\n  ?st ps:P166 ?award .\r\n  ?st pq:P585 ?date .  \r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Ce SELECT démontre la pertinence des dates concernants les \"awards\". \r\n# Compte les awarding events de pilotes entre 14-18 avec les dates complètes\r\n\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n\r\nSELECT (COUNT(DISTINCT ?st) AS ?awardingEvents_WWI)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;  # flying ace\r\n       wdt:P607 wd:Q361 .     # WWI\r\n  ?ace p:P166 ?st .\r\n  ?st  ps:P166 ?award ;\r\n       pq:P585 ?date .\r\n  FILTER(?date >= \"1914-07-28T00:00:00Z\"^^xsd:dateTime &&\r\n         ?date <  \"1918-11-12T00:00:00Z\"^^xsd:dateTime)\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p: <http://www.wikidata.org/prop/>\r\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq: <http://www.wikidata.org/prop/qualifier/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT DISTINCT ?person ?personLabel ?awardLabel ?date\r\nWHERE {\r\n  ?person wdt:P106 wd:Q2095549 ;  # flying ace\r\n          wdt:P607 wd:Q361 .     # participated in WWI\r\n\r\n  ?person p:P166 ?statement .\r\n  ?statement ps:P166 ?award ;\r\n             pq:P585 ?date .\r\n\r\n  FILTER(YEAR(?date) >= 1914 && YEAR(?date) <= 1918)\r\n\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n}\r\nORDER BY ?date\r\nLIMIT 20\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Compte les \"awarding events\" pour les pilotes de WW1 durant leur vie (donc inclut des décorations reçues, par exemple, en 1930...)\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\n\r\nSELECT (COUNT(DISTINCT ?st) AS ?awardingEvents_allDates)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P166 ?st .\r\n  ?st  ps:P166 ?award ;\r\n       pq:P585 ?date .\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# certains pilotes ont des awarding events avec la date P580 (start time) et non P585, il ne s'agit cependant que de 8 cas\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\n\r\nSELECT (COUNT(DISTINCT ?st) AS ?awardingEvents_onlyP580_noP585)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; \r\n       wdt:P607 wd:Q361 .      \r\n  ?ace p:P166 ?st .\r\n  ?st  ps:P166 ?award ;\r\n       pq:P580 ?start .        \r\n  FILTER NOT EXISTS { ?st pq:P585 [] }   # avec P580 mais pas P585\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# compte les pilotes avec 1+ award date\r\n\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithDatedAwards)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n  ?ace p:P166 ?st .\r\n  ?st  ps:P166 ?award ; pq:P585 ?date .\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# ce select montre le ratio des \"awarding events\" avec et sans date. \r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX p:   <http://www.wikidata.org/prop/>\r\nPREFIX ps:  <http://www.wikidata.org/prop/statement/>\r\nPREFIX pq:  <http://www.wikidata.org/prop/qualifier/>\r\n\r\nSELECT ?withDate ?withoutDate\r\nWHERE {\r\n  {\r\n    SELECT (COUNT(DISTINCT ?st) AS ?withDate)\r\n    WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n      ?ace p:P166 ?st .\r\n      ?st ps:P166 ?award ; pq:P585 ?date .\r\n    }\r\n  }\r\n  {\r\n    SELECT (COUNT(DISTINCT ?st) AS ?withoutDate)\r\n    WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ; wdt:P607 wd:Q361 .\r\n      ?ace p:P166 ?st .\r\n      ?st ps:P166 ?award .\r\n      FILTER NOT EXISTS { ?st pq:P585 ?date }\r\n    }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## Recherche d'une potentielle membership classe\r\nSouvent prisé des analyses statistiques, chercher une membership classe est tout à fait pertinent. Dans le cas des pilotes, certaines entrées wikidata de personnages célèbres (ex: Guynemer) démontre la présence de P463 (member of) pour les unités militaires ainsi que P2031 (start of work period)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# requête qui compte la présence de ces propriétés\r\n\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT\r\n  (COUNT(DISTINCT ?ace) AS ?totalAces)\r\n  (COUNT(DISTINCT ?memberOf) AS ?acesWithP463)\r\n  (COUNT(DISTINCT ?start) AS ?acesWithP2031)\r\n  (COUNT(DISTINCT ?end) AS ?acesWithP2032)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;  # occupation: flying ace\r\n       wdt:P607 wd:Q361 ;     # WWI\r\n       wdt:P31 wd:Q5 .\r\n\r\n  OPTIONAL { ?ace wdt:P463 ?memberOf }   # member of (military unit, organization, etc.)\r\n  OPTIONAL { ?ace wdt:P2031 ?start }     # start of work period\r\n  OPTIONAL { ?ace wdt:P2032 ?end }       # end of work period\r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Malheureusement, les résultats sont plutôt maigres. Seuls 61 pilotes avec \"member of\" pour 1099 as. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# SELECT Count pour les unités: seulement 72 aces avec \"member of\" et 61 DISTINCT unités. \r\n\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT\r\n  (COUNT(DISTINCT ?ace) AS ?totalAces)\r\n  (COUNT(DISTINCT ?aceWithP463) AS ?acesWithP463)\r\n  (COUNT(DISTINCT ?unit) AS ?distinctUnits)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;  # occupation: flying ace\r\n       wdt:P607 wd:Q361 ;      # participated in WWI\r\n       wdt:P31 wd:Q5 .      # human\r\n\r\n  OPTIONAL {\r\n    ?ace wdt:P463 ?unit .\r\n    BIND(?ace AS ?aceWithP463)\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Une des grandes questions est comment déterminer le belligérant pour lequel un pilote s'est battu. Une première possibilité est P945, l'allégeance. Cet élément est potentiellement très pertinent pour élaborer une \"membership\" classe",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# cette requête présente la situation\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\nPREFIX bd:  <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?ace ?aceLabel ?allegiance ?allegianceLabel\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;   # flying ace\r\n       wdt:P607 wd:Q361 ;       # World War I\r\n       wdt:P945 ?allegiance .   # allegiance\r\n\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }\r\n}\r\nLIMIT 50",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?metric ?count WHERE {\r\n  {\r\n    SELECT (\"totalAces\" AS ?metric) (COUNT(DISTINCT ?ace) AS ?count) WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;  # flying ace\r\n           wdt:P607 wd:Q361 ;      # WWI\r\n           wdt:P31  wd:Q5 .        # human\r\n    }\r\n  }\r\n  UNION\r\n  {\r\n    SELECT (\"acesWithAllegiance\" AS ?metric) (COUNT(DISTINCT ?ace) AS ?count) WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;\r\n           wdt:P607 wd:Q361 ;\r\n           wdt:P31  wd:Q5 ;\r\n           wdt:P945 ?allegiance .  # allegiance present\r\n    }\r\n  }\r\n  UNION\r\n  {\r\n    SELECT (\"acesWithoutAllegiance\" AS ?metric) (COUNT(DISTINCT ?ace) AS ?count) WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;\r\n           wdt:P607 wd:Q361 ;\r\n           wdt:P31  wd:Q5 .\r\n      FILTER NOT EXISTS { ?ace wdt:P945 ?allegiance }\r\n    }\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "La requête précédente montre que largement, l'allégeance n'est pas présente, sur 1099 pilotes, seulement 189 possèdent cette propriété.",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## Cause de la mort: P1347 (military classification) vs. P509 (cause of death)\r\nWikidata propose une cause de la mort générale (P509) et une version plus spécifique pour le personnelle militaire, le select suivant permet de vérifier l'option la plus pertinente",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "## SELECT pour vérifier ceux avec P1347, P509, les deux ou aucun\r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?metric (COUNT(DISTINCT ?ace) AS ?count) WHERE {\r\n  {\r\n    SELECT ?ace (\"both_P1347_P509\" AS ?metric) WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;  # flying ace\r\n           wdt:P607 wd:Q361 ;      # WWI\r\n           wdt:P31  wd:Q5 ;        # human\r\n           wdt:P1347 ?classification ;\r\n           wdt:P509  ?causeOfDeath .\r\n    }\r\n  }\r\n  UNION\r\n  {\r\n    SELECT ?ace (\"only_P1347\" AS ?metric) WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;\r\n           wdt:P607 wd:Q361 ;\r\n           wdt:P31  wd:Q5 ;\r\n           wdt:P1347 ?classification .\r\n      FILTER NOT EXISTS { ?ace wdt:P509 ?causeOfDeath }\r\n    }\r\n  }\r\n  UNION\r\n  {\r\n    SELECT ?ace (\"only_P509\" AS ?metric) WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;\r\n           wdt:P607 wd:Q361 ;\r\n           wdt:P31  wd:Q5 ;\r\n           wdt:P509 ?causeOfDeath .\r\n      FILTER NOT EXISTS { ?ace wdt:P1347 ?classification }\r\n    }\r\n  }\r\n  UNION\r\n  {\r\n    SELECT ?ace (\"neither_P1347_nor_P509\" AS ?metric) WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;\r\n           wdt:P607 wd:Q361 ;\r\n           wdt:P31  wd:Q5 .\r\n      FILTER NOT EXISTS { ?ace wdt:P1347 ?classification }\r\n      FILTER NOT EXISTS { ?ace wdt:P509 ?causeOfDeath }\r\n    }\r\n  }\r\n}\r\nGROUP BY ?metric\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Le SELECT précédent a démontré que malheureusement, ces données ne sont que peu présentes dans la majorité des pilotes. Des analyses peuvent néanmoins être effectuées pour l'exercice. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# compte les individus avec une cause de mort, P509 ou P1347: total 178. \r\nPREFIX wd:  <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?count) WHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;  # flying ace\r\n       wdt:P607 wd:Q361 ;      # WWI\r\n       wdt:P31  wd:Q5 .        # human\r\n  {\r\n    ?ace wdt:P509 ?causeOfDeath .\r\n  }\r\n  UNION\r\n  {\r\n    ?ace wdt:P1347 ?classification .\r\n  }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## Place of Birth (P19)\r\nPlusieurs pilotes possèdent une Place of Birth. Néanmoins, Wikidata complique la situation avec plusieurs country (P17) pour une P19. logiquement, une ville en Ukraine a pu faire parti à différents moments de l'histoire, de l'Empire Autro-Hongrois, Russe, Allemand, indépendance etc. \r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# 1034 pilotes avec P19 (sur environ 1100, ou 1065)\r\n\r\nPREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(DISTINCT ?ace) AS ?acesWithBirthPlace)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;   # pilotes\r\n       wdt:P607 wd:Q361 .      # 14-18\r\n  ?ace wdt:P19 ?placeOfBirth .\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Illustre la situtation, avec plusieurs P17 pour un seul P19.",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd:   <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?ace ?aceLabel \r\n       (COUNT(DISTINCT ?placeOfBirth) AS ?nbPlaces)\r\n       (COUNT(DISTINCT ?birthCountry) AS ?nbCountries)\r\n       (GROUP_CONCAT(DISTINCT ?placeLabel; separator=\", \") AS ?places)\r\n       (GROUP_CONCAT(DISTINCT ?birthCountryLabel; separator=\", \") AS ?countries)\r\nWHERE {\r\n  ?ace wdt:P106 wd:Q2095549 ;   # pilotes\r\n       wdt:P607 wd:Q361 .       # 14-18\r\n\r\n  OPTIONAL {\r\n    ?ace wdt:P19 ?placeOfBirth .\r\n    OPTIONAL { ?placeOfBirth rdfs:label ?placeLabel FILTER(LANG(?placeLabel) = \"en\") }\r\n    OPTIONAL {\r\n      ?placeOfBirth wdt:P17 ?birthCountry .\r\n      OPTIONAL { ?birthCountry rdfs:label ?birthCountryLabel FILTER(LANG(?birthCountryLabel) = \"en\") }\r\n    }\r\n  }\r\n\r\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }\r\n}\r\nGROUP BY ?ace ?aceLabel\r\nORDER BY DESC(?nbCountries)\r\nLIMIT 50\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Heureusement, seuls 11 P19 avec plusieurs P17 (comme le démontre le SELECT suivant). La place of birth peut donc être une donnée fiable pour l'analyse. ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd:   <http://www.wikidata.org/entity/>\r\nPREFIX wdt:  <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(DISTINCT ?placeOfBirth) AS ?placesWithMultipleCountries)\r\nWHERE {\r\n  {\r\n    SELECT ?placeOfBirth (COUNT(DISTINCT ?birthCountry) AS ?nbCountries)\r\n    WHERE {\r\n      ?ace wdt:P106 wd:Q2095549 ;\r\n           wdt:P607 wd:Q361 ;\r\n           wdt:P19 ?placeOfBirth .\r\n      ?placeOfBirth wdt:P17 ?birthCountry .\r\n    }\r\n    GROUP BY ?placeOfBirth\r\n    HAVING(COUNT(DISTINCT ?birthCountry) > 1)\r\n  }\r\n}\r\n",
     "metadata": {}
   }
 ]
