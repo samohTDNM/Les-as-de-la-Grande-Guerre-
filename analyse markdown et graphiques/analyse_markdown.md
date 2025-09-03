@@ -55,6 +55,10 @@ Néanmoins, lorsque l'on décide de comparer les effectifs pendant 14-18 vs. hor
 ![Proportion des décorations pendant la Première Guerre mondiale](proportion_awards_ww1.png "Proportion des décorations pendant la Première Guerre mondiale")
 
 
+Si on se penche sur les générations qui ont majoritairement obtenues les décorations, en regroupant par cohorte de cinq ans, on distingue que l'écrasante majorité concerne les générations de 1890-1899. Ce sont donc encore ces jeunes hommes, pour qui la mortalité semble être haute, qui sont également très décoré. Cela peut sembler logique: il sont très actifs au combat comme la distribution des morts le démontre, ils ont donc plus de chances de commettre des actes héroïque. 
+
+![Distribution des décorations selon les générations](distribution_awards_generations.png "Distribution des décorations selon les générations")
+
 
 
 # Décorations: analyse bivariée et réseau
