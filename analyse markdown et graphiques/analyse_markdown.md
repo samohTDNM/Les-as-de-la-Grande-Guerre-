@@ -59,6 +59,15 @@ Si on se penche sur les générations qui ont majoritairement obtenues les déco
 
 ![Distribution des décorations selon les générations](distribution_awards_generations.png "Distribution des décorations selon les générations")
 
+# Allégeance : analyse bivariée
+
+Une heatmap avec test du chi2 sur les allégeances par cohortes de cinq ans, permet de nous renseigner sur les surreprésentations de certaines allégeances à certaines générations. 
+
+
+
+![Heatmap allégeance par périodes](heatmap_periods_allegeances.png "Heatmap allégeance par périodes")
+
+Nous observons donc une forte présence des pilotes français dans la période de 1880-1884, des hommes alors plutôt âgés lors du conflit. Ceci pourrait également démontrer la précocité du développement de l'aviation en France par rapport aux autres nations. A l'inverse, la France est sous-représentée fortement en 1895-1899, la génération qui pourtant, semblait très présente dans nos distributions. 
 
 
 # Décorations: analyse bivariée et réseau
